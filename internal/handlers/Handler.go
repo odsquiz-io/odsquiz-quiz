@@ -84,6 +84,8 @@ func respondError(c fiber.Ctx, err error) error {
 		status = fiber.StatusBadRequest
 	case apperrors.KindUnauthorized:
 		status = fiber.StatusUnauthorized
+	case apperrors.KindForbidden:
+		status = fiber.StatusForbidden
 	case apperrors.KindNotFound:
 		status = fiber.StatusNotFound
 	}

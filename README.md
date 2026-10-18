@@ -35,6 +35,10 @@ go run ./cmd/api
 - `POST /api/quiz/submissions`
 - `GET /api/quiz/submissions`
 
+Both submission routes need a bearer token from the auth API. A user whose
+`users.suspended_at` is set gets `403 {"code":"account_suspended"}` on
+`POST /api/quiz/submissions`; reading the own history stays allowed.
+
 Submit payload:
 
 ```json

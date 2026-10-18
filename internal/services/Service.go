@@ -21,6 +21,15 @@ func (s *Service) Submit(userID string, request models.SubmitQuizRequest) (*mode
 	if userID == "" {
 		return nil, apperrors.Unauthorized(apperrors.CodeUserIDUnavailable, nil)
 	}
+
+	suspended, err := s.Repo.IsUserSuspended(userID)
+	if err != nil {
+		return nil, err
+	}
+	if suspended {
+		return nil, apperrors.Forbidden(apperrors.CodeAccountSuspended, nil)
+	}
+
 	if len(request.Answers) == 0 {
 		return nil, apperrors.BadRequest(apperrors.CodeIncompleteQuiz, errors.New("answers are required"))
 	}
