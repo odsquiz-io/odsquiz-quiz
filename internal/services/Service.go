@@ -66,6 +66,35 @@ func (s *Service) Submit(userID string, request models.SubmitQuizRequest) (*mode
 	}, nil
 }
 
+func (s *Service) ListSubmissions(userID string) ([]models.SubmissionSummary, error) {
+	if userID == "" {
+		return nil, apperrors.Unauthorized(apperrors.CodeUserIDUnavailable, nil)
+	}
+
+	submissions, err := s.Repo.ListSubmissionsByUser(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Non-nil so an empty history is encoded as [] rather than null.
+	summaries := make([]models.SubmissionSummary, 0, len(submissions))
+	for _, submission := range submissions {
+		odsScores := make([]models.ODSScore, 0, len(submission.ODSScores))
+		for _, score := range submission.ODSScores {
+			odsScores = append(odsScores, models.ODSScore{ODSNumber: score.ODSNumber, Points: score.Points})
+		}
+
+		summaries = append(summaries, models.SubmissionSummary{
+			ID:          submission.ID,
+			TotalPoints: submission.TotalPoints,
+			CompletedAt: submission.CompletedAt,
+			ODSScores:   odsScores,
+		})
+	}
+
+	return summaries, nil
+}
+
 func (s *Service) resolveAnswers(requestAnswers []models.SubmittedAnswer) ([]models.QuizSubmissionAnswer, error) {
 	hasIDs := requestAnswers[0].QuestionID != "" || requestAnswers[0].AnswerOptionID != ""
 	if hasIDs {
