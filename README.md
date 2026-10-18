@@ -33,6 +33,7 @@ go run ./cmd/api
 
 - `GET /api/quiz/questions`
 - `POST /api/quiz/submissions`
+- `GET /api/quiz/submissions`
 
 Submit payload:
 

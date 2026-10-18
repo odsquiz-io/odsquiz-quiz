@@ -20,6 +20,7 @@ func Setup(app *fiber.App, cfg *config.Config) {
 	app.Get("/health", func(c fiber.Ctx) error { return c.SendString("ok") })
 	app.Get("/api/quiz/questions", handler.ListQuestions)
 	app.Post("/api/quiz/submissions", middleware.Protected(cfg.JWTSecret), handler.Submit)
+	app.Get("/api/quiz/submissions", middleware.Protected(cfg.JWTSecret), handler.ListSubmissions)
 
 	app.Use(func(c fiber.Ctx) error { return c.SendStatus(fiber.StatusNotFound) })
 }

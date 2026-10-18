@@ -15,6 +15,7 @@ type Repository interface {
 	FindOptionsByQuestionNumbers(values map[int]int) (map[int]models.QuizAnswerOption, map[int]models.QuizQuestion, error)
 	FindOptionsByIDs(values map[string]string) (map[string]models.QuizAnswerOption, map[string]models.QuizQuestion, error)
 	CreateSubmission(userID string, answers []models.QuizSubmissionAnswer, odsScores []models.ODSScore, totalPoints int) (*models.QuizSubmission, error)
+	ListSubmissionsByUser(userID string) ([]models.QuizSubmission, error)
 }
 
 type repository struct {
@@ -166,4 +167,16 @@ func (r *repository) CreateSubmission(userID string, answers []models.QuizSubmis
 	}
 
 	return submission, nil
+}
+
+func (r *repository) ListSubmissionsByUser(userID string) ([]models.QuizSubmission, error) {
+	var submissions []models.QuizSubmission
+	err := r.DB.
+		Preload("ODSScores", func(db *gorm.DB) *gorm.DB {
+			return db.Order("ods_number ASC")
+		}).
+		Where("user_id = ?", userID).
+		Order("completed_at DESC").
+		Find(&submissions).Error
+	return submissions, err
 }

@@ -105,3 +105,10 @@ type SubmitQuizResponse struct {
 	TotalPoints  int        `json:"total_points"`
 	ODSScores    []ODSScore `json:"ods_scores"`
 }
+
+type SubmissionSummary struct {
+	ID          string     `json:"id"`
+	TotalPoints int        `json:"total_points"`
+	CompletedAt time.Time  `json:"completed_at"`
+	ODSScores   []ODSScore `json:"ods_scores"`
+}

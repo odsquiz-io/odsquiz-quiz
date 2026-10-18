@@ -37,6 +37,16 @@ func (h *Handler) Submit(c fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(response)
 }
 
+func (h *Handler) ListSubmissions(c fiber.Ctx) error {
+	userID, _ := c.Locals("userID").(string)
+	submissions, err := h.Service.ListSubmissions(userID)
+	if err != nil {
+		return respondError(c, err)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(submissions)
+}
+
 func parseSubmitRequest(body []byte) (models.SubmitQuizRequest, error) {
 	var request models.SubmitQuizRequest
 	if err := json.Unmarshal(body, &request); err == nil && request.Answers != nil {
