@@ -16,6 +16,7 @@ type Repository interface {
 	FindOptionsByIDs(values map[string]string) (map[string]models.QuizAnswerOption, map[string]models.QuizQuestion, error)
 	CreateSubmission(userID string, answers []models.QuizSubmissionAnswer, odsScores []models.ODSScore, totalPoints int) (*models.QuizSubmission, error)
 	ListSubmissionsByUser(userID string) ([]models.QuizSubmission, error)
+	IsUserSuspended(userID string) (bool, error)
 }
 
 type repository struct {
@@ -179,4 +180,12 @@ func (r *repository) ListSubmissionsByUser(userID string) ([]models.QuizSubmissi
 		Order("completed_at DESC").
 		Find(&submissions).Error
 	return submissions, err
+}
+
+func (r *repository) IsUserSuspended(userID string) (bool, error) {
+	var count int64
+	err := r.DB.Model(&models.UserScore{}).
+		Where("id = ? AND suspended_at IS NOT NULL", userID).
+		Count(&count).Error
+	return count > 0, err
 }

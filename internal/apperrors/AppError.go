@@ -8,6 +8,7 @@ type Code string
 const (
 	KindBadRequest   Kind = "bad_request"
 	KindUnauthorized Kind = "unauthorized"
+	KindForbidden    Kind = "forbidden"
 	KindNotFound     Kind = "not_found"
 	KindInternal     Kind = "internal"
 )
@@ -21,6 +22,7 @@ const (
 	CodeDuplicateQuestion  Code = "duplicate_question"
 	CodeUserIDUnavailable  Code = "user_id_unavailable"
 	CodeInvalidCredentials Code = "invalid_credentials"
+	CodeAccountSuspended   Code = "account_suspended"
 	CodeInternal           Code = "internal_error"
 )
 
@@ -47,6 +49,10 @@ func BadRequest(code Code, err error) error {
 
 func Unauthorized(code Code, err error) error {
 	return &AppError{Kind: KindUnauthorized, Code: code, Err: err}
+}
+
+func Forbidden(code Code, err error) error {
+	return &AppError{Kind: KindForbidden, Code: code, Err: err}
 }
 
 func NotFound(code Code, err error) error {
