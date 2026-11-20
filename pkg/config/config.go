@@ -16,6 +16,8 @@ type Config struct {
 	DBPassword string
 	DBName     string
 	DBSSLMode  string
+
+	OriginToken string // Secret the Cloudflare Worker sends on API requests; the check is off when empty
 }
 
 func Load() (*Config, error) {
@@ -31,6 +33,8 @@ func Load() (*Config, error) {
 		DBPassword: os.Getenv("DB_PASSWORD"),
 		DBName:     os.Getenv("DB_NAME"),
 		DBSSLMode:  os.Getenv("DB_SSLMODE"),
+
+		OriginToken: os.Getenv("ORIGIN_TOKEN"),
 	}
 	if cfg.DBSSLMode == "" {
 		cfg.DBSSLMode = os.Getenv("DBSSLMode")
